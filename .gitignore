@@ -1,0 +1,19 @@
+# Visual Studio cache och inställningar
+.vs/
+*.user
+*.suo
+
+# Byggmappar
+bin/
+obj/
+
+# Paket och tillfälliga filer
+*.nupkg
+packages/
+*.log
+
+# Visual Studio Code
+.vscode/
+
+# Andra tillfälliga filer
+*.dbmdl
