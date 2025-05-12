@@ -16,5 +16,17 @@ namespace Tomasos_Pizzeria.Data
         public virtual DbSet<Order> Orders { get; set; }
         public virtual DbSet<UserType> UserTypes { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Customer>()
+                .HasOne(c => c.UserType)
+                .WithMany()
+                .HasForeignKey(c => c.UserTypeId)
+                .OnDelete(DeleteBehavior.Restrict); 
+        }
+
+
     }
 }

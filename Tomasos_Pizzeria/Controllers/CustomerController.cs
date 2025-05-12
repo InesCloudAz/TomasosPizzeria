@@ -24,14 +24,14 @@ namespace Tomasos_Pizzeria.Controllers
             return Ok();
         }
 
-        [HttpPost]
+        [HttpPut("update")]
         public IActionResult UpdateCustomerData(Customer customer)
         {
             // Logic to add a new customer
             return CreatedAtAction(nameof(GetCustomerData), new { id = customer.CustomerId }, customer);
         }
 
-        [HttpGet]
+        [HttpGet("get-order-list")]
         public IActionResult GetOrderList()
         {
             // Logic to get all orders

@@ -24,6 +24,10 @@ namespace Tomasos_Pizzeria.Data.Entities
         [StringLength(100)]
         public string Phone { get; set; }
 
+        [Required]
+        [StringLength(100)]
+        public string Role { get; set; }
+
         public int UserTypeId { get; set; }
 
         [ForeignKey("UserTypeId")]
