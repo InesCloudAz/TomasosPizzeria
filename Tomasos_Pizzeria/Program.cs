@@ -1,4 +1,7 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using Tomasos_Pizzeria.Data;
 using Tomasos_Pizzeria.Data.Interfaces;
 using Tomasos_Pizzeria.Data.Repos;
@@ -9,6 +12,67 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddControllers();
+
+builder.Services.AddAuthentication(opt =>
+{
+    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+     .AddJwtBearer(opt =>
+     {
+         opt.TokenValidationParameters = new TokenValidationParameters
+         {
+             ValidateIssuer = true,
+             ValidateAudience = true,
+             ValidateLifetime = true,
+             ValidateIssuerSigningKey = true,
+             ValidIssuer = "http://localhost:5077",
+             ValidAudience = "http://localhost:5077",
+             IssuerSigningKey =
+        new SymmetricSecurityKey(Encoding.UTF8.GetBytes("privatekey197354%¤%#098713)%¤?913864%%%%##"))
+         };
+     });
+
+
+builder.Services.AddSwaggerGen(c =>
+{
+    c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Description = "Skriv 'Bearer <din-token>' för att autentisera.",
+        Name = "Authorization",
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey
+    });
+
+    c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials();
+        });
+});
+
 
 
 builder.Services.AddDbContext<TomasosPizzeriaContext>(
@@ -25,6 +89,15 @@ builder.Services.AddScoped<ICustomerRepo, CustomerRepo>();
 
 var app = builder.Build();
 
+app.UseCors(policy =>
+    policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
+);
+
+
+builder.Services.AddAuthorization();
+
+
+
 
 
 app.UseRouting();
@@ -33,6 +106,10 @@ app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
 });
+
+app.UseSwagger();
+app.UseSwaggerUI();
+app.UseAuthentication();
 
 
 
