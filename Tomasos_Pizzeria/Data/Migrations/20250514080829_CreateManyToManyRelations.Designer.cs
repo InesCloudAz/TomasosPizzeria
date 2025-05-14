@@ -2,17 +2,20 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tomasos_Pizzeria.Data;
 
 #nullable disable
 
-namespace Tomasos_Pizzeria.Migrations
+namespace Tomasos_Pizzeria.Data.Migrations
 {
     [DbContext(typeof(TomasosPizzeriaContext))]
-    partial class TomasosPizzeriaContextModelSnapshot : ModelSnapshot
+    [Migration("20250514080829_CreateManyToManyRelations")]
+    partial class CreateManyToManyRelations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

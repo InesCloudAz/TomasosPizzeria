@@ -19,10 +19,9 @@ namespace Tomasos_Pizzeria.Data.Entities
         [StringLength(100)]
         public string OrderStatus { get; set; }
 
-        public int CustomerId { get; set; }
-
-        [ForeignKey("CustomerId")]
-        public Customer Customer { get; set; }
+      public ICollection <Dish> Dishes { get; set; } = new List<Dish>();
 
     }
+
+    
 }

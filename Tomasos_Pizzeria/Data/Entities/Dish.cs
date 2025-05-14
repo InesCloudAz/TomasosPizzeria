@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Tomasos_Pizzeria.Data.Entities
 {
@@ -20,9 +19,17 @@ namespace Tomasos_Pizzeria.Data.Entities
         [StringLength(2000)]
         public string IngredientsList { get; set; }
 
-        public int CategoryId { get; set; }
-        [ForeignKey("CategoryId")]
-        public DishCategory DishCategory { get; set; }
+        [Required]
+        [StringLength(200)]
+        public string CategoryName { get; set; }
+
+        
+        public ICollection<Order> Orders { get; set; } = new List<Order>();
+
+        public ICollection<Ingredients> Ingredients { get; set; } = new List<Ingredients>();
+
+
+
 
 
 

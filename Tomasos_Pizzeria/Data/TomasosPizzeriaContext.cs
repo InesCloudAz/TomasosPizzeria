@@ -12,21 +12,23 @@ namespace Tomasos_Pizzeria.Data
         public virtual DbSet<Admin> Admins { get; set; }
         public virtual DbSet<Customer> Customers { get; set; }
         public virtual DbSet<Dish> Dishes { get; set; }
-        public virtual DbSet<DishCategory> DishCategories { get; set; }
         public virtual DbSet<Order> Orders { get; set; }
         public virtual DbSet<UserType> UserTypes { get; set; }
+        public virtual DbSet<Ingredients> Ingredients { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Order>()
+                .HasMany(o => o.Dishes)
+                .WithMany(d => d.Orders)
+                .UsingEntity(j => j.ToTable("OrderDishes"));
 
-            modelBuilder.Entity<Customer>()
-                .HasOne(c => c.UserType)
-                .WithMany()
-                .HasForeignKey(c => c.UserTypeId)
-                .OnDelete(DeleteBehavior.Restrict); 
+            modelBuilder.Entity<Dish>()
+                .HasMany(d => d.Ingredients)
+                .WithMany(i => i.Dishes)
+                .UsingEntity(j => j.ToTable("DishIngredients"));
         }
-
 
     }
 }

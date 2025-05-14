@@ -2,17 +2,20 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tomasos_Pizzeria.Data;
 
 #nullable disable
 
-namespace Tomasos_Pizzeria.Migrations
+namespace Tomasos_Pizzeria.Data.Migrations
 {
     [DbContext(typeof(TomasosPizzeriaContext))]
-    partial class TomasosPizzeriaContextModelSnapshot : ModelSnapshot
+    [Migration("20250513144432_AddManyToManyRelations")]
+    partial class AddManyToManyRelations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,7 +51,7 @@ namespace Tomasos_Pizzeria.Migrations
 
                     b.HasIndex("IngredientsId");
 
-                    b.ToTable("DishIngredients", (string)null);
+                    b.ToTable("DishIngredients");
                 });
 
             modelBuilder.Entity("DishOrder", b =>
@@ -63,7 +66,7 @@ namespace Tomasos_Pizzeria.Migrations
 
                     b.HasIndex("OrdersOrderId");
 
-                    b.ToTable("OrderDishes", (string)null);
+                    b.ToTable("DishOrder");
                 });
 
             modelBuilder.Entity("Tomasos_Pizzeria.Data.Entities.Admin", b =>

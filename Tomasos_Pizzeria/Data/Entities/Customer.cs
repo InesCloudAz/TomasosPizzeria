@@ -28,10 +28,11 @@ namespace Tomasos_Pizzeria.Data.Entities
         [StringLength(100)]
         public string Role { get; set; }
 
-        public int UserTypeId { get; set; }
+       public ICollection<UserType> UserTypes { get; set; } = new List<UserType>();
 
-        [ForeignKey("UserTypeId")]
-        public UserType UserType { get; set; }
+       
+
+       
 
 
 
