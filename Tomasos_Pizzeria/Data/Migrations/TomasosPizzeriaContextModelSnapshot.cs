@@ -7,7 +7,7 @@ using Tomasos_Pizzeria.Data;
 
 #nullable disable
 
-namespace Tomasos_Pizzeria.Migrations
+namespace Tomasos_Pizzeria.Data.Migrations
 {
     [DbContext(typeof(TomasosPizzeriaContext))]
     partial class TomasosPizzeriaContextModelSnapshot : ModelSnapshot
@@ -16,7 +16,7 @@ namespace Tomasos_Pizzeria.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.4")
+                .HasAnnotation("ProductVersion", "9.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -48,7 +48,7 @@ namespace Tomasos_Pizzeria.Migrations
 
                     b.HasIndex("IngredientsId");
 
-                    b.ToTable("DishIngredients", (string)null);
+                    b.ToTable("DishIngredients");
                 });
 
             modelBuilder.Entity("DishOrder", b =>
@@ -63,7 +63,7 @@ namespace Tomasos_Pizzeria.Migrations
 
                     b.HasIndex("OrdersOrderId");
 
-                    b.ToTable("OrderDishes", (string)null);
+                    b.ToTable("DishOrder");
                 });
 
             modelBuilder.Entity("Tomasos_Pizzeria.Data.Entities.Admin", b =>
@@ -196,6 +196,9 @@ namespace Tomasos_Pizzeria.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
 
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
                     b.Property<string>("OrderDetails")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -213,6 +216,8 @@ namespace Tomasos_Pizzeria.Migrations
 
                     b.HasKey("OrderId");
 
+                    b.HasIndex("CustomerId");
+
                     b.ToTable("Orders");
                 });
 
@@ -224,12 +229,17 @@ namespace Tomasos_Pizzeria.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserTypeId"));
 
+                    b.Property<int>("AdminId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
                     b.HasKey("UserTypeId");
+
+                    b.HasIndex("AdminId");
 
                     b.ToTable("UserTypes");
                 });
@@ -277,6 +287,28 @@ namespace Tomasos_Pizzeria.Migrations
                         .HasForeignKey("OrdersOrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Tomasos_Pizzeria.Data.Entities.Order", b =>
+                {
+                    b.HasOne("Tomasos_Pizzeria.Data.Entities.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("Tomasos_Pizzeria.Data.Entities.UserType", b =>
+                {
+                    b.HasOne("Tomasos_Pizzeria.Data.Entities.Admin", "admin")
+                        .WithMany()
+                        .HasForeignKey("AdminId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("admin");
                 });
 #pragma warning restore 612, 618
         }

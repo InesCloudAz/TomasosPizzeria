@@ -17,18 +17,7 @@ namespace Tomasos_Pizzeria.Data
         public virtual DbSet<Ingredients> Ingredients { get; set; }
 
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Order>()
-                .HasMany(o => o.Dishes)
-                .WithMany(d => d.Orders)
-                .UsingEntity(j => j.ToTable("OrderDishes"));
-
-            modelBuilder.Entity<Dish>()
-                .HasMany(d => d.Ingredients)
-                .WithMany(i => i.Dishes)
-                .UsingEntity(j => j.ToTable("DishIngredients"));
-        }
+       
 
     }
 }

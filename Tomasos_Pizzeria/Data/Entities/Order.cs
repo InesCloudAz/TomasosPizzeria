@@ -19,7 +19,15 @@ namespace Tomasos_Pizzeria.Data.Entities
         [StringLength(100)]
         public string OrderStatus { get; set; }
 
-      public ICollection <Dish> Dishes { get; set; } = new List<Dish>();
+        
+        public int CustomerId { get; set; }
+
+        
+        public Customer Customer { get; set; }
+
+
+
+        public ICollection <Dish> Dishes { get; set; } = new List<Dish>();
 
     }
 

@@ -12,6 +12,13 @@ namespace Tomasos_Pizzeria.Data.Entities
         [StringLength(100)]
         public string Role { get; set; }
 
+        public int AdminId { get; set; }
+
+       
+        public Admin admin { get; set; }
+
+
+
         public ICollection<Customer> Customers { get; set; } = new List<Customer>();
 
 
