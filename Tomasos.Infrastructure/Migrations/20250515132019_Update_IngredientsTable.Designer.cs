@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Tomasos.Infrastructure;
 using Tomasos_Pizzeria.Data;
 
 #nullable disable
@@ -11,8 +12,8 @@ using Tomasos_Pizzeria.Data;
 namespace Tomasos_Pizzeria.Data.Migrations
 {
     [DbContext(typeof(TomasosPizzeriaContext))]
-    [Migration("20250515105434_AddAdminToUserType")]
-    partial class AddAdminToUserType
+    [Migration("20250515132019_Update_IngredientsTable")]
+    partial class Update_IngredientsTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -181,6 +182,11 @@ namespace Tomasos_Pizzeria.Data.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<string>("DishName")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<string>("IngredientsList")
                         .IsRequired()
                         .HasMaxLength(1000)
@@ -232,17 +238,12 @@ namespace Tomasos_Pizzeria.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserTypeId"));
 
-                    b.Property<int>("AdminId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
                     b.HasKey("UserTypeId");
-
-                    b.HasIndex("AdminId");
 
                     b.ToTable("UserTypes");
                 });
@@ -301,17 +302,6 @@ namespace Tomasos_Pizzeria.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Customer");
-                });
-
-            modelBuilder.Entity("Tomasos_Pizzeria.Data.Entities.UserType", b =>
-                {
-                    b.HasOne("Tomasos_Pizzeria.Data.Entities.Admin", "admin")
-                        .WithMany()
-                        .HasForeignKey("AdminId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("admin");
                 });
 #pragma warning restore 612, 618
         }

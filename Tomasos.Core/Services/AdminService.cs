@@ -1,4 +1,4 @@
-﻿using Tomasos_Pizzeria.Core.Interfaces;
+﻿using Tomasos.Core.Interfaces;
 using Tomasos_Pizzeria.Data.Entities;
 using Tomasos_Pizzeria.Data.Interfaces;
 

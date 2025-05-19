@@ -1,7 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Tomasos_Pizzeria.Data.Entities;
+﻿using Tomasos_Pizzeria.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 
-namespace Tomasos_Pizzeria.Data
+
+namespace Tomasos.Infrastructure
 {
     public class TomasosPizzeriaContext : DbContext
     {

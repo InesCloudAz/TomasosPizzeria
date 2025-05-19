@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Tomasos.Infrastructure;
 using Tomasos_Pizzeria.Data;
 
 #nullable disable
@@ -11,8 +12,8 @@ using Tomasos_Pizzeria.Data;
 namespace Tomasos_Pizzeria.Data.Migrations
 {
     [DbContext(typeof(TomasosPizzeriaContext))]
-    [Migration("20250515104803_AddCustomerToOrder")]
-    partial class AddCustomerToOrder
+    [Migration("20250515124704_delete_AdminIdFromUserType")]
+    partial class delete_AdminIdFromUserType
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

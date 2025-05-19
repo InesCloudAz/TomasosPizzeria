@@ -14,7 +14,12 @@ namespace Tomasos_Pizzeria.Data.Entities
         [StringLength(200)]
         public string CategoryName { get; set; }
 
-       public ICollection<Dish> Dishes { get; set; } = new List<Dish>();
+        [Required]
+        [StringLength(500)]
+        public string DishName { get; set; }
+
+
+        public ICollection<Dish> Dishes { get; set; } = new List<Dish>();
         
 
 

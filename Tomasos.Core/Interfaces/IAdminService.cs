@@ -1,6 +1,6 @@
 ﻿using Tomasos_Pizzeria.Data.Entities;
 
-namespace Tomasos_Pizzeria.Core.Interfaces
+namespace Tomasos.Core.Interfaces
 {
     public interface IAdminService
     {

@@ -2,9 +2,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Tomasos_Pizzeria.Data;
+using Tomasos.Infrastructure;
 using Tomasos_Pizzeria.Data.Interfaces;
 using Tomasos_Pizzeria.Data.Repos;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -75,17 +76,27 @@ builder.Services.AddCors(options =>
 
 
 
-builder.Services.AddDbContext<TomasosPizzeriaContext>(
-   options => options.UseSqlServer(
-       "Server=tcp:pizzeria.database.windows.net,1433;Initial Catalog=TomasosPizzeria;Persist Security Info=False;User ID=tomasospizzeria;Password=pizzeria123!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;",
-       sqlServerOptions => sqlServerOptions.EnableRetryOnFailure())
+//builder.Services.AddDbContext<TomasosPizzeriaContext>(
+//   options => options.UseSqlServer(
+//       "Server=tcp:pizzeria.database.windows.net,1433;Initial Catalog=TomasosPizzeria;Persist Security Info=False;User ID=tomasospizzeria;Password=pizzeria123!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;",
+//       sqlServerOptions => sqlServerOptions.EnableRetryOnFailure())
+//);
+
+builder.Services.AddDbContext<TomasosPizzeriaContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        sql => sql.MigrationsAssembly("Tomasos.Infrastructure") 
+    )
 );
+
 
 
 
 
 builder.Services.AddScoped<IAdminRepo, AdminRepo>();
 builder.Services.AddScoped<ICustomerRepo, CustomerRepo>();
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -94,10 +105,10 @@ app.UseCors(policy =>
 );
 
 
-builder.Services.AddAuthorization();
-
-
-
+app.UseSwagger();
+app.UseSwaggerUI();
+app.UseAuthentication();
+app.UseAuthorization();
 
 
 app.UseRouting();
@@ -107,9 +118,6 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllers();
 });
 
-app.UseSwagger();
-app.UseSwaggerUI();
-app.UseAuthentication();
 
 
 

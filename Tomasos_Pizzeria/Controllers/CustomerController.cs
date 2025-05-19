@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Tomasos_Pizzeria.Core.Interfaces;
 using Tomasos_Pizzeria.Data.Entities;
+using Tomasos_Pizzeria.Data.Interfaces;
 
 namespace Tomasos_Pizzeria.Controllers
 {
@@ -10,36 +12,39 @@ namespace Tomasos_Pizzeria.Controllers
     public class CustomerController : ControllerBase
     {
 
+        private readonly  ICustomerService _customerService;
+        private readonly ICustomerRepo _customerRepo;
+
         [HttpPost("login")]
-        public IActionResult LoginCustomer(Customer customer)
+        public async Task <IActionResult> LoginCustomer(Customer customer)
         {
-            // Logic to create a new customer
+            
             return CreatedAtAction(nameof(GetCustomerData), new { id = customer.CustomerId }, customer);
         }
 
         [HttpGet("get-data")]
-        public IActionResult GetCustomerData()
+        public async Task <IActionResult> GetCustomerData()
         {
-            // Logic to get all customers
+
             return Ok();
         }
 
         [HttpPut("update")]
-        public IActionResult UpdateCustomerData(Customer customer)
+        public async Task <IActionResult> UpdateCustomerData(Customer customer)
         {
             // Logic to add a new customer
             return CreatedAtAction(nameof(GetCustomerData), new { id = customer.CustomerId }, customer);
         }
 
         [HttpGet("get-order-list")]
-        public IActionResult GetOrderList()
+        public async Task <IActionResult> GetOrderList()
         {
             // Logic to get all orders
             return Ok();
         }
 
         [HttpPost("create-account")]
-        public IActionResult CreateAccount(Order order)
+        public async Task <IActionResult> CreateAccount(Order order)
         {
 
             // Logic to create a new account
