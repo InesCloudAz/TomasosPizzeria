@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Tomasos.Domain.Entities;
 using Tomasos.Infrastructure;
+using Tomasos.Infrastructure.Identity;
 using Tomasos_Pizzeria.Data.Interfaces;
 using Tomasos_Pizzeria.Data.Repos;
 
@@ -86,8 +89,16 @@ builder.Services.AddDbContext<TomasosPizzeriaContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection"),
         sql => sql.MigrationsAssembly("Tomasos.Infrastructure") 
+
+
     )
 );
+
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+.AddEntityFrameworkStores<ApplicationUserContext>()
+.AddDefaultTokenProviders();
+
+
 
 
 

@@ -14,7 +14,7 @@ namespace Tomasos_Pizzeria.Data.Entities
         public string Description { get; set; }
         [Required]
         [StringLength(100)]
-        public string Price { get; set; }
+        public decimal Price { get; set; }
         [Required]
         [StringLength(2000)]
         public string IngredientsList { get; set; }

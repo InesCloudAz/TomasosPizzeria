@@ -1,4 +1,5 @@
-﻿using Tomasos_Pizzeria.Core.Interfaces;
+﻿using Tomasos.Domain.DTO;
+using Tomasos_Pizzeria.Core.Interfaces;
 using Tomasos_Pizzeria.Data.Entities;
 using Tomasos_Pizzeria.Data.Interfaces;
 
@@ -37,6 +38,10 @@ namespace Tomasos_Pizzeria.Core.Services
             await _customerRepo.CreateAccount(customer);
         }
 
+        public Task<string?> LoginCustomer(CustomerDTO.CustomerLoginDTO customer)
+        {
+            throw new NotImplementedException();
+        }
     }
     
 }

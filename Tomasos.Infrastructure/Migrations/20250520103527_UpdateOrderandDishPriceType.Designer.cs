@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tomasos.Infrastructure;
 
@@ -10,9 +11,11 @@ using Tomasos.Infrastructure;
 namespace Tomasos_Pizzeria.Data.Migrations
 {
     [DbContext(typeof(TomasosPizzeriaContext))]
-    partial class TomasosPizzeriaContextModelSnapshot : ModelSnapshot
+    [Migration("20250520103527_UpdateOrderandDishPriceType")]
+    partial class UpdateOrderandDishPriceType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

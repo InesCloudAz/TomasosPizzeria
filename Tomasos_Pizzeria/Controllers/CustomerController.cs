@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Tomasos_Pizzeria.Core.Interfaces;
 using Tomasos_Pizzeria.Data.Entities;
 using Tomasos_Pizzeria.Data.Interfaces;
+using static Tomasos.Domain.DTO.CustomerDTO;
 
 namespace Tomasos_Pizzeria.Controllers
 {
@@ -13,33 +14,53 @@ namespace Tomasos_Pizzeria.Controllers
     {
 
         private readonly  ICustomerService _customerService;
-        private readonly ICustomerRepo _customerRepo;
+        
 
-        [HttpPost("login")]
-        public async Task <IActionResult> LoginCustomer(Customer customer)
+
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("api/login")]
+        public async Task <IActionResult> LoginCustomer(CustomerLoginDTO customer)
         {
-            
-            return CreatedAtAction(nameof(GetCustomerData), new { id = customer.CustomerId }, customer);
+
+            var token = await _customerService.LoginCustomer(customer);
+
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized();
+            }
+
+            return Ok(new { token });
         }
 
         [HttpGet("get-data")]
+        [Authorize]
         public async Task <IActionResult> GetCustomerData()
         {
+            var customerData = await _customerService.GetCustomerData();
+            if (customerData == null)
+            {
+                return NotFound();
+            }
+            return Ok(customerData);
+        
 
-            return Ok();
+
+           
         }
 
         [HttpPut("update")]
         public async Task <IActionResult> UpdateCustomerData(Customer customer)
         {
-            // Logic to add a new customer
+            
             return CreatedAtAction(nameof(GetCustomerData), new { id = customer.CustomerId }, customer);
         }
 
         [HttpGet("get-order-list")]
         public async Task <IActionResult> GetOrderList()
         {
-            // Logic to get all orders
+            
             return Ok();
         }
 
@@ -47,7 +68,7 @@ namespace Tomasos_Pizzeria.Controllers
         public async Task <IActionResult> CreateAccount(Order order)
         {
 
-            // Logic to create a new account
+          
             return CreatedAtAction(nameof(GetOrderList), new { id = order.OrderId }, order);
 
         }

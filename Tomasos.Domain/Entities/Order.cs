@@ -13,7 +13,7 @@ namespace Tomasos_Pizzeria.Data.Entities
         public string OrderDetails { get; set; }
         [Required]
         [StringLength(100)]
-        public string Price { get; set; }
+        public decimal Price { get; set; }
 
         [Required]
         [StringLength(100)]
