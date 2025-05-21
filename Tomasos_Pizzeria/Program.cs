@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Tomasos.Core.Interfaces;
 using Tomasos.Domain.Entities;
 using Tomasos.Infrastructure;
 using Tomasos.Infrastructure.Identity;
+using Tomasos_Pizzeria.Core.Services;
 using Tomasos_Pizzeria.Data.Interfaces;
 using Tomasos_Pizzeria.Data.Repos;
 
@@ -106,6 +108,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 
 builder.Services.AddScoped<IAdminRepo, AdminRepo>();
 builder.Services.AddScoped<ICustomerRepo, CustomerRepo>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 
 builder.Services.AddAuthorization();
 
