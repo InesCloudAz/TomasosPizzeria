@@ -1,12 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+
+
+
 namespace Tomasos_Pizzeria.Data.Entities
 {
     public class Customer
     {
         [Key]
         public int CustomerId { get; set; }
+        public string ApplicationUserId { get; set; }
 
         [Required]
         [StringLength(50)]
@@ -25,14 +29,25 @@ namespace Tomasos_Pizzeria.Data.Entities
         public string Phone { get; set; }
 
         [Required]
+        public int BonusPoints { get; set; }
+
+        [Required]
         [StringLength(100)]
         public string Role { get; set; }
+        public ICollection<UserType> UserTypes { get; set; } = new List<UserType>();
+        public object UserType { get; set; }
 
-       public ICollection<UserType> UserTypes { get; set; } = new List<UserType>();
 
-       
+        //[Required]
+        //public string IdentityUserId { get; set; }
 
-       
+        //[ForeignKey("IdentityUserId")]
+        //public ApplicationUser IdentityUser { get; set; }
+
+
+
+
+
 
 
 

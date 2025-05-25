@@ -1,74 +1,97 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Tomasos.Core.Interfaces;
+using Tomasos.Domain.DTO;
+using Tomasos.Infrastructure.Data;
+using Tomasos.Infrastructure.Identity;
 using Tomasos_Pizzeria.Data.Entities;
-using Tomasos_Pizzeria.Data.Interfaces;
 
-namespace Tomasos_Pizzeria.Core.Services
-{
-    public class AdminService : IAdminService
+public class AdminService : IAdminService
     {
-        private readonly IAdminRepo _adminRepo;
-        public AdminService(IAdminRepo adminRepo)
-        {
-            _adminRepo = adminRepo;
-        }
 
-        public async Task<List<Customer>> GetAllCustomers()
-        {
-            return await _adminRepo.GetAllCustomers();
-        }
+    private readonly TomasosPizzeriaContext _context;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-        public async Task<List<Customer>> GetRegularCustomers()
-        {
-            return await _adminRepo.GetRegularCustomers();
-        }
+    public AdminService(
+   TomasosPizzeriaContext context,
+   UserManager<ApplicationUser> userManager)
+    {
+        _context = context;
+        _userManager = userManager;
+    }
 
-        public async Task<List<Customer>> GetPremiumCustomers()
-        {
-            return await _adminRepo.GetPremiumCustomers();
-        }
 
-        public async Task CreateDish(Dish dish)
-        {
-            await _adminRepo.CreateDish(dish);
-        }
 
-        public async Task UpdateDish(Dish dish)
+    public async Task CreateDish(Dish dish)
         {
-            await _adminRepo.UpdateDish(dish);
+            _context.Dishes.Add(dish);
+            await _context.SaveChangesAsync();
         }
 
         public async Task DeleteOrder(int orderId)
         {
-            await _adminRepo.DeleteOrder(orderId);
+            var order = await _context.Orders.FindAsync(orderId);
+            if (order != null)
+            {
+                _context.Orders.Remove(order);
+                await _context.SaveChangesAsync();
+            }
         }
+
+        public async Task<List<Customer>> GetAllCustomers()
+        {
+        return await _context.Customers
+     .Select(c => new CustomerDTO
+     {
+         Username = c.UserName,
+         Email = c.Email,
+         PhoneNumber = c.Phone,
+         FullName = c.BonusPoints,
+         Address = c.Role
+     }).ToListAsync();
+    }
+
+        public async Task<List<Customer>> GetPremiumCustomers()
+        {
+        var usersInRole = await _userManager.GetUsersInRoleAsync("PremiumUser");
+        return _context.Customers.Where(c => usersInRole.Any(u => u.Id == c.ApplicationUserId)).ToList();
+    }
+
+        public async Task<List<Customer>> GetRegularCustomers()
+        {
+        var usersInRole = await _userManager.GetUsersInRoleAsync("RegularUser");
+        return _context.Customers.Where(c => usersInRole.Any(u => u.Id == c.ApplicationUserId)).ToList();
+    }
 
         public async Task UpdateCustomerRole(int customerId, string role)
         {
-            //var customer = await _adminRepo.GetCustomerById(customerId);
-            //if (customer == null) throw new Exception("Customer not found");
+        var customer = await _context.Customers.FindAsync(customerId);
+        if (customer == null) return;
 
-            //var user = await _userManager.FindByIdAsync(customer.IdentityUserId);
-            //if (user == null) throw new Exception("User not found");
+        var user = await _userManager.FindByIdAsync(customer.ApplicationUserId); // du behöver kanske koppla Customer till ApplicationUser
 
-            //var currentRoles = await _userManager.GetRolesAsync(user);
-            //await _userManager.RemoveFromRolesAsync(user, currentRoles);
+        if (user != null)
+        {
+            var roles = await _userManager.GetRolesAsync(user);
+            await _userManager.RemoveFromRolesAsync(user, roles);
+            await _userManager.AddToRoleAsync(user, role);
+        }
+    }
 
-            //if (!await _roleManager.RoleExistsAsync(role))
-            //{
-            //    await _roleManager.CreateAsync(new IdentityRole(role));
-            //}
-
-            //await _userManager.AddToRoleAsync(user, role);
-            //customer.Role = role;
-            //await _adminRepo.SaveChangesAsync();
+        public async Task UpdateDish(Dish dish)
+        {
+            _context.Dishes.Update(dish);
+            await _context.SaveChangesAsync();
         }
 
         public async Task UpdateOrderStatus(int orderId, string status)
         {
-            await _adminRepo.UpdateOrderStatus(orderId, status);
+            var order = await _context.Orders.FindAsync(orderId);
+            if (order != null)
+            {
+                order.Status = status;
+                await _context.SaveChangesAsync();
+            }
         }
-
-
     }
-}
+

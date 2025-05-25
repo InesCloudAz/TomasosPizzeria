@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Tomasos.Infrastructure;
+using Tomasos.Infrastructure.Data;
 using Tomasos_Pizzeria.Data;
 
 #nullable disable

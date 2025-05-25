@@ -1,11 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Tomasos.Infrastructure;
+using Tomasos.Infrastructure.Data;
 using Tomasos_Pizzeria.Data.Entities;
-using Tomasos_Pizzeria.Data.Interfaces;
 
 namespace Tomasos_Pizzeria.Data.Repos
 {
-    public class AdminRepo : IAdminRepo
+    public class AdminRepo 
     {
 
         private readonly TomasosPizzeriaContext _context;

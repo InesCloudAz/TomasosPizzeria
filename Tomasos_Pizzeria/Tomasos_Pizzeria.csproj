@@ -18,6 +18,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Tomasos.Core\Tomasos.Core.csproj" />
+    <ProjectReference Include="..\Tomasos.Domain\Tomasos.Domain.csproj" />
+    <ProjectReference Include="..\Tomasos.Infrastructure\Tomasos.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

@@ -5,15 +5,14 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tomasos.Infrastructure.Data;
-using Tomasos_Pizzeria.Data;
 
 #nullable disable
 
 namespace Tomasos_Pizzeria.Data.Migrations
 {
     [DbContext(typeof(TomasosPizzeriaContext))]
-    [Migration("20250515104803_AddCustomerToOrder")]
-    partial class AddCustomerToOrder
+    [Migration("20250522140252_AddBonusPointsToCustomer")]
+    partial class AddBonusPointsToCustomer
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -101,6 +100,9 @@ namespace Tomasos_Pizzeria.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CustomerId"));
 
+                    b.Property<int>("BonusPoints")
+                        .HasColumnType("int");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -159,10 +161,9 @@ namespace Tomasos_Pizzeria.Data.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
 
-                    b.Property<string>("Price")
-                        .IsRequired()
+                    b.Property<decimal>("Price")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("DishId");
 
@@ -181,6 +182,11 @@ namespace Tomasos_Pizzeria.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("DishName")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("IngredientsList")
                         .IsRequired()
@@ -213,10 +219,9 @@ namespace Tomasos_Pizzeria.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Price")
-                        .IsRequired()
+                    b.Property<decimal>("Price")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("OrderId");
 

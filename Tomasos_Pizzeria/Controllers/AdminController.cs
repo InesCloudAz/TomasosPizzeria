@@ -1,64 +1,112 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using Tomasos.Core.Interfaces;
-using Tomasos.Domain.Entities;
+using Tomasos.Domain.DTO;
+using Tomasos.Infrastructure.Identity;
 using Tomasos_Pizzeria.Data.Entities;
-using Tomasos_Pizzeria.Data.Interfaces;
 
 namespace Tomasos_Pizzeria.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     [Authorize(Roles = "Admin")]
-    
+
+
+
     public class AdminController : ControllerBase
     {
         private readonly IAdminService _adminService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IConfiguration _configuration;
 
-        public AdminController(IAdminService adminService, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public AdminController(
+            IAdminService adminService,
+            UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager,
+            IConfiguration configuration)
+
         {
             _adminService = adminService;
             _userManager = userManager;
             _roleManager = roleManager;
+            _configuration = configuration;
         }
 
-        [HttpPost("login")]
-        //public async Task <IActionResult> LoginAdmin (Admin admin)
-        //{
-        //     return 
-        //}
 
-        [HttpGet("customers")]
+        [AllowAnonymous]
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] AdminLoginDTO adminLogin)
+        {
+            if (adminLogin.AdminName == "JackAdmin" && adminLogin.Password == "jackadmin345!")
+            {
+                // Läs JWT-inställningar direkt från appsettings.json
+                var secretKey = _configuration["JwtSettings:Secret"];
+                var issuer = _configuration["JwtSettings:Issuer"];
+                var audience = _configuration["JwtSettings:Audience"];
+                var expireMinutes = int.Parse(_configuration["JwtSettings:ExpireMinutes"]);
+
+                var claims = new[]
+                {
+            new Claim(ClaimTypes.Name, adminLogin.AdminName),
+            new Claim(ClaimTypes.Role, "Admin")
+        };
+
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+                var token = new JwtSecurityToken(
+                    issuer: issuer,
+                    audience: audience,
+                    claims: claims,
+                    expires: DateTime.Now.AddMinutes(expireMinutes),
+                    signingCredentials: creds
+                );
+
+                var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+
+                return Ok(new { token = tokenString });
+            }
+
+            return Unauthorized("Felaktiga inloggningsuppgifter");
+        }
+
+
+
+
+            [HttpGet("Get all customers")]
         public async Task<ActionResult<List<Customer>>> GetAllCustomers()
         {
             return Ok(await _adminService.GetAllCustomers());
         }
 
 
-        [HttpGet("customers/regular")]
+        [HttpGet("Get regular customers")]
         public async Task<ActionResult<List<Customer>>> GetRegularCustomers()
         {
             return Ok(await _adminService.GetRegularCustomers());
         }
 
-        [HttpGet("customers/premium")]
+        [HttpGet("Get premium customers")]
         public async Task<ActionResult<List<Customer>>> GetPremiumCustomers()
         {
             return Ok(await _adminService.GetPremiumCustomers());
         }
 
-        
-        [HttpPost("dish")]
+
+        [HttpPost("Create dish")]
         public async Task<IActionResult> CreateDish([FromBody] Dish dish)
         {
             await _adminService.CreateDish(dish);
             return Ok("Dish created");
         }
 
-        [HttpPut("dish")]
+        [HttpPut("Update dish")]
         public async Task<IActionResult> UpdateDish([FromBody] Dish dish)
         {
             await _adminService.UpdateDish(dish);
@@ -66,43 +114,52 @@ namespace Tomasos_Pizzeria.Controllers
         }
 
 
-        [HttpDelete("order/{orderId}")]
+        [HttpDelete("Delete order/{orderId}")]
         public async Task<IActionResult> DeleteOrder(int orderId)
         {
             await _adminService.DeleteOrder(orderId);
             return Ok("Order deleted");
         }
-        [HttpPut("order/{orderId}/status")]
+        [HttpPut("Update order status/{orderId}")]
         public async Task<IActionResult> UpdateOrderStatus(int orderId, [FromBody] string status)
         {
             await _adminService.UpdateOrderStatus(orderId, status);
             return Ok("Order status updated");
         }
 
-        [HttpPut("customer/{customerId}/role")]
-
-        public async Task<IActionResult> UpdateCustomerRole(int customerId, [FromQuery] string role)
+        [HttpPut("Update user role")]
+        public async Task<IActionResult> UpdateUserRole([FromQuery] string email, [FromQuery] string newRole)
         {
-            // Hämtar kunden från tjänsten (för att få IdentityUserId)
-            var customers = await _adminService.GetAllCustomers();
-            var customer = customers.FirstOrDefault(c => c.CustomerId == customerId);
-            if (customer == null) return NotFound("Customer not found");
 
-            var user = await _userManager.FindByIdAsync(customer.IdentityUserId);
-            if (user == null) return NotFound("User not found");
+            if (!await _roleManager.RoleExistsAsync(newRole))
+            {
+                return BadRequest("Invalid role");
+            }
+
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+                return NotFound("User not found");
 
             var currentRoles = await _userManager.GetRolesAsync(user);
-            await _userManager.RemoveFromRolesAsync(user, currentRoles);
+            var result = await _userManager.RemoveFromRolesAsync(user, currentRoles);
 
-            if (!await _roleManager.RoleExistsAsync(role))
-                await _roleManager.CreateAsync(new IdentityRole(role));
+            if (!result.Succeeded)
+                return BadRequest("Failed to remove existing roles");
 
-            await _userManager.AddToRoleAsync(user, role);
+            var addResult = await _userManager.AddToRoleAsync(user, newRole);
 
-            await _adminService.UpdateCustomerRole(customerId, role);
-            return Ok($"Customer role updated to {role}");
+            if (!addResult.Succeeded)
+                return BadRequest("Failed to assign new role");
+
+            return Ok($"User role updated to {newRole}");
         }
+
+       
+
+
 
 
     }
+
 }
