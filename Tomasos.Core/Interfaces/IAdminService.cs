@@ -1,10 +1,11 @@
-﻿using Tomasos_Pizzeria.Data.Entities;
+﻿using Tomasos.Domain.DTO;
+using Tomasos_Pizzeria.Data.Entities;
 
 namespace Tomasos.Core.Interfaces
 {
     public interface IAdminService
     {
-        Task<List<Customer>> GetAllCustomers();
+        Task<List<CustomerDTO>> GetAllCustomers();
         Task<List<Customer>> GetRegularCustomers();
         Task<List<Customer>> GetPremiumCustomers();
         Task CreateDish(Dish dish);

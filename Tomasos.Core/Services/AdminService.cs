@@ -38,7 +38,7 @@ public class AdminService : IAdminService
             }
         }
 
-        public async Task<List<Customer>> GetAllCustomers()
+        public async Task<List<CustomerDTO>> GetAllCustomers()
         {
         return await _context.Customers
      .Select(c => new CustomerDTO
@@ -46,7 +46,7 @@ public class AdminService : IAdminService
          Username = c.UserName,
          Email = c.Email,
          PhoneNumber = c.Phone,
-         FullName = c.BonusPoints,
+         BonusPoints = c.BonusPoints,
          Address = c.Role
      }).ToListAsync();
     }

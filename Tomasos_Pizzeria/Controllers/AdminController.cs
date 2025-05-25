@@ -79,34 +79,35 @@ namespace Tomasos_Pizzeria.Controllers
 
 
 
-            [HttpGet("Get all customers")]
-        public async Task<ActionResult<List<Customer>>> GetAllCustomers()
+            [HttpGet("get-all-customers")]
+        public async Task<ActionResult<List<CustomerDTO>>> GetAllCustomers()
         {
-            return Ok(await _adminService.GetAllCustomers());
+            var customers = await _adminService.GetAllCustomers();
+            return Ok(customers);
         }
 
 
-        [HttpGet("Get regular customers")]
+        [HttpGet("get-regular-customers")]
         public async Task<ActionResult<List<Customer>>> GetRegularCustomers()
         {
             return Ok(await _adminService.GetRegularCustomers());
         }
 
-        [HttpGet("Get premium customers")]
+        [HttpGet("get-premium-customers")]
         public async Task<ActionResult<List<Customer>>> GetPremiumCustomers()
         {
             return Ok(await _adminService.GetPremiumCustomers());
         }
 
 
-        [HttpPost("Create dish")]
+        [HttpPost("create-dish")]
         public async Task<IActionResult> CreateDish([FromBody] Dish dish)
         {
             await _adminService.CreateDish(dish);
             return Ok("Dish created");
         }
 
-        [HttpPut("Update dish")]
+        [HttpPut("update-dish")]
         public async Task<IActionResult> UpdateDish([FromBody] Dish dish)
         {
             await _adminService.UpdateDish(dish);
@@ -114,20 +115,20 @@ namespace Tomasos_Pizzeria.Controllers
         }
 
 
-        [HttpDelete("Delete order/{orderId}")]
+        [HttpDelete("delete-order/{orderId}")]
         public async Task<IActionResult> DeleteOrder(int orderId)
         {
             await _adminService.DeleteOrder(orderId);
             return Ok("Order deleted");
         }
-        [HttpPut("Update order status/{orderId}")]
+        [HttpPut("update-order-status/{orderId}")]
         public async Task<IActionResult> UpdateOrderStatus(int orderId, [FromBody] string status)
         {
             await _adminService.UpdateOrderStatus(orderId, status);
             return Ok("Order status updated");
         }
 
-        [HttpPut("Update user role")]
+        [HttpPut("update-user-role")]
         public async Task<IActionResult> UpdateUserRole([FromQuery] string email, [FromQuery] string newRole)
         {
 

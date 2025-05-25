@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Tomasos.Core.DTO;
 using Tomasos.Domain.DTO;
 using Tomasos.Infrastructure.Identity;
 using Tomasos_Pizzeria.Core.Interfaces;

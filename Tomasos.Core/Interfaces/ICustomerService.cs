@@ -1,4 +1,5 @@
-﻿using Tomasos.Domain.DTO;
+﻿using Tomasos.Core.DTO;
+using Tomasos.Domain.DTO;
 using Tomasos_Pizzeria.Data.Entities;
 
 namespace Tomasos_Pizzeria.Core.Interfaces
@@ -11,6 +12,6 @@ namespace Tomasos_Pizzeria.Core.Interfaces
         Task UpdateCustomerData(Customer customer);
         Task<List<Order>> GetOrderList();
         Task CreateAccount(Customer customer);
-        Task<string?> LoginCustomer(CustomerDTO.CustomerLoginDTO customer);
+        Task<string?> LoginCustomer(CustomerLoginDTO customer);
     }
 }
