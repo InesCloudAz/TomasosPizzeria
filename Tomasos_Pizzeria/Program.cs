@@ -100,7 +100,42 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-app.UseRouting();
+// Lägg in detta EF Core seed-anrop här:
+using (var scope = app.Services.CreateScope())
+{
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+    // Skapa rollen om den inte finns
+    if (!await roleManager.RoleExistsAsync("Admin"))
+    {
+        await roleManager.CreateAsync(new IdentityRole("Admin"));
+    }
+
+    // Kolla om användaren redan finns
+    var adminEmail = "admin@tomasos.com";
+    var adminUser = await userManager.FindByEmailAsync(adminEmail);
+    if (adminUser == null)
+    {
+        var user = new ApplicationUser
+        {
+            UserName = adminEmail,
+            Email = adminEmail,
+            FullName = "Admin User",
+            EmailConfirmed = true
+        };
+
+        var password = "Admin123!";  // Sätt ett starkt lösenord här!
+        var result = await userManager.CreateAsync(user, password);
+
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(user, "Admin");
+        }
+    }
+}
+
+        app.UseRouting();
 
 
 app.UseCors();

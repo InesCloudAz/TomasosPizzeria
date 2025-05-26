@@ -34,7 +34,12 @@ namespace Tomasos_Pizzeria.Data.Entities
         [Required]
         [StringLength(100)]
         public string Role { get; set; }
+
+        [StringLength(1000)]
+        public string Address { get; set; }
         public ICollection<UserType> UserTypes { get; set; } = new List<UserType>();
+
+        [NotMapped]
         public object UserType { get; set; }
 
 

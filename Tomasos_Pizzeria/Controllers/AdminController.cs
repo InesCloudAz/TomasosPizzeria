@@ -43,63 +43,63 @@ namespace Tomasos_Pizzeria.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] AdminLoginDTO adminLogin)
         {
-            if (adminLogin.AdminName == "JackAdmin" && adminLogin.Password == "jackadmin345!")
-            {
-                // Läs JWT-inställningar direkt från appsettings.json
-                var secretKey = _configuration["JwtSettings:Secret"];
-                var issuer = _configuration["JwtSettings:Issuer"];
-                var audience = _configuration["JwtSettings:Audience"];
-                var expireMinutes = int.Parse(_configuration["JwtSettings:ExpireMinutes"]);
+           
+            var user = await _userManager.FindByNameAsync(adminLogin.UserName);
+            if (user == null || !await _userManager.CheckPasswordAsync(user, adminLogin.Password))
+                return Unauthorized("Invalid credentials");
 
-                var claims = new[]
-                {
-            new Claim(ClaimTypes.Name, adminLogin.AdminName),
-            new Claim(ClaimTypes.Role, "Admin")
-        };
+            // Hämta roller
+            var roles = await _userManager.GetRolesAsync(user);
 
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
-                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            // Skapa claims
+            var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.Name, user.UserName),
+        new Claim(ClaimTypes.NameIdentifier, user.Id),
+    };
+            foreach (var role in roles)
+                claims.Add(new Claim(ClaimTypes.Role, role));
 
-                var token = new JwtSecurityToken(
-                    issuer: issuer,
-                    audience: audience,
-                    claims: claims,
-                    expires: DateTime.Now.AddMinutes(expireMinutes),
-                    signingCredentials: creds
-                );
+            // Skapa token
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:Secret"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var token = new JwtSecurityToken(
+                issuer: _configuration["JwtSettings:Issuer"],
+                audience: _configuration["JwtSettings:Audience"],
+                claims: claims,
+                expires: DateTime.Now.AddMinutes(int.Parse(_configuration["JwtSettings:ExpireMinutes"])),
+                signingCredentials: creds);
 
-                var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
-                return Ok(new { token = tokenString });
-            }
-
-            return Unauthorized("Felaktiga inloggningsuppgifter");
+            return Ok(new { token = tokenString });
         }
 
 
+        [AllowAnonymous]
 
-
-            [HttpGet("get-all-customers")]
+        [HttpGet("get-all-customers")]
         public async Task<ActionResult<List<CustomerDTO>>> GetAllCustomers()
         {
             var customers = await _adminService.GetAllCustomers();
             return Ok(customers);
         }
 
-
+        [AllowAnonymous]
         [HttpGet("get-regular-customers")]
         public async Task<ActionResult<List<Customer>>> GetRegularCustomers()
         {
             return Ok(await _adminService.GetRegularCustomers());
         }
 
+        [AllowAnonymous]
         [HttpGet("get-premium-customers")]
         public async Task<ActionResult<List<Customer>>> GetPremiumCustomers()
         {
             return Ok(await _adminService.GetPremiumCustomers());
         }
 
-
+        [AllowAnonymous]
         [HttpPost("create-dish")]
         public async Task<IActionResult> CreateDish([FromBody] Dish dish)
         {
@@ -107,6 +107,7 @@ namespace Tomasos_Pizzeria.Controllers
             return Ok("Dish created");
         }
 
+        [AllowAnonymous]
         [HttpPut("update-dish")]
         public async Task<IActionResult> UpdateDish([FromBody] Dish dish)
         {
@@ -114,13 +115,15 @@ namespace Tomasos_Pizzeria.Controllers
             return Ok("Dish updated");
         }
 
-
+        [AllowAnonymous]
         [HttpDelete("delete-order/{orderId}")]
         public async Task<IActionResult> DeleteOrder(int orderId)
         {
             await _adminService.DeleteOrder(orderId);
             return Ok("Order deleted");
         }
+
+        [AllowAnonymous]
         [HttpPut("update-order-status/{orderId}")]
         public async Task<IActionResult> UpdateOrderStatus(int orderId, [FromBody] string status)
         {
@@ -128,6 +131,7 @@ namespace Tomasos_Pizzeria.Controllers
             return Ok("Order status updated");
         }
 
+        [AllowAnonymous]
         [HttpPut("update-user-role")]
         public async Task<IActionResult> UpdateUserRole([FromQuery] string email, [FromQuery] string newRole)
         {
